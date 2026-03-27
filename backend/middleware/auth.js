@@ -1,0 +1,47 @@
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+
+/**
+ * JWT Authentication Middleware
+ * Verifies the Bearer token from the Authorization header.
+ * Attaches the user document to req.user if valid.
+ */
+const protect = async (req, res, next) => {
+  let token;
+
+  // Check for token in Authorization header
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Not authorized, no token provided" });
+  }
+
+  try {
+    // Verify the token and decode payload
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Attach user to request (without password)
+    req.user = await User.findById(decoded.id).select("-password");
+
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User not found, token invalid" });
+    }
+
+    next();
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Not authorized, token failed" });
+  }
+};
+
+module.exports = { protect };
