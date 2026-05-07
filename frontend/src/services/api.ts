@@ -1,21 +1,28 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL: "http://localhost:5000/api",
 });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
+  if (token && token !== "undefined" && token !== "null") {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    console.log(`[API Response] ${res.config.url}:`, res.data);
+    return res;
+  },
   (error) => {
-    if (error.response?.status === 401) {
+    const token = localStorage.getItem("token");
+    console.error(`[API Error] ${error.config?.url}:`, error.response?.status, error.response?.data);
+
+    if (error.response?.status === 401 && token) {
+      console.warn("401 Unauthorized with valid token - Logging out...");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/login";
@@ -31,6 +38,16 @@ export const authApi = {
     api.post("/auth/signup", data),
 };
 
+export interface Resume {
+  _id: string;
+  originalName: string;
+  fileUrl: string;
+  extractedText: string;
+  mimetype: string;
+  size: number;
+  createdAt: string;
+}
+
 export const resumeApi = {
   upload: (file: File) => {
     const formData = new FormData();
@@ -39,12 +56,48 @@ export const resumeApi = {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
+  getMyResume: () => api.get<{ success: boolean; resume: Resume | null }>("/resume/me"),
+  delete: (id: string) => api.delete(`/resume/${id}`),
 };
 
+export interface AnswerFeedback {
+  score: number; // 0-10
+  feedback: string;
+  missingPoints: string[];
+  improvementSuggestion: string;
+}
+
+export interface InterviewConfig {
+  role?: string;
+  difficulty?: string;
+  total?: number;
+  technical?: number;
+  hr?: number;
+  behavioral?: number;
+  aptitude?: number;
+  technicalCategories?: string[];
+  regenerate?: boolean;
+}
+
 export const interviewApi = {
-  getQuestions: () => api.get("/questions"),
-  submitAnswer: (data: { questionId: string; answer: string }) =>
-    api.post("/answers", { questionId: data.questionId, answerText: data.answer }),
+  getQuestions: (config: InterviewConfig) =>
+    api.post("/questions", config),
+  submitAnswer: (data: { questionId: string; answerText: string; sessionId?: string }) =>
+    api.post<AnswerFeedback>("/answers", data),
+};
+
+export interface AnalyticsData {
+  totalInterviews: number;
+  averageScore: number;
+  bestArea: string;
+  performanceOverTime: { date: string; score: number }[];
+  topicPerformance: { topic: string; score: number }[];
+  weakAreas: { topic: string; score: number }[];
+  recommendations: { title: string; description: string }[];
+}
+
+export const analyticsApi = {
+  getOverview: () => api.get<AnalyticsData>("/analytics"),
 };
 
 export default api;

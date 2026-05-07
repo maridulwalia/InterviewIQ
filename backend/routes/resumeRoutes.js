@@ -1,7 +1,7 @@
 const express = require("express");
 const { protect } = require("../middleware/auth");
 const uploadMiddleware = require("../middleware/uploadMiddleware");
-const { uploadResume, getResumes } = require("../controllers/resumeController");
+const { uploadResume, getResumes, getMyResume, deleteResume } = require("../controllers/resumeController");
 
 const router = express.Router();
 
@@ -15,7 +15,13 @@ router.post(
   uploadResume
 );
 
+// @GET /api/resume/me – Get latest resume with full text
+router.get("/me", getMyResume);
+
 // @GET /api/resume – Get all resumes for current user
 router.get("/", getResumes);
+
+// @DELETE /api/resume/:id – Delete a resume
+router.delete("/:id", deleteResume);
 
 module.exports = router;

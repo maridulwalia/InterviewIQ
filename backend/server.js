@@ -4,8 +4,6 @@ const cors = require("cors");
 const path = require("path");
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
-const Question = require("./models/Question");
-const sampleQuestions = require("./config/questions");
 
 // Load environment variables from .env file
 dotenv.config();
@@ -13,15 +11,9 @@ dotenv.config();
 // Initialize Express app
 const app = express();
 
-// ─── Connect to MongoDB & Auto-seed ──────────────────────────────────
+// ─── Connect to MongoDB ───────────────────────────────────────────────
 const initDB = async () => {
   await connectDB();
-  // Auto-seed questions if the collection is empty
-  const count = await Question.countDocuments();
-  if (count === 0) {
-    await Question.insertMany(sampleQuestions);
-    console.log(`🌱 Auto-seeded ${sampleQuestions.length} sample questions.`);
-  }
 };
 initDB();
 
@@ -53,6 +45,8 @@ app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/resume", require("./routes/resumeRoutes"));
 app.use("/api/questions", require("./routes/questionRoutes"));
 app.use("/api/answers", require("./routes/answerRoutes"));
+app.use("/api/analytics", require("./routes/analyticsRoutes"));
+app.use("/api/interview", require("./routes/questionRoutes")); // Using questionRoutes for mock interview as well
 
 // ─── Health Check ────────────────────────────────────────────────────
 app.get("/api/health", (req, res) => {

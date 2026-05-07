@@ -81,4 +81,53 @@ const getResumes = async (req, res, next) => {
   }
 };
 
-module.exports = { uploadResume, getResumes };
+/**
+ * @route   GET /api/resume/me
+ * @desc    Get the latest resume with full content
+ * @access  Private
+ */
+const getMyResume = async (req, res, next) => {
+  try {
+    const resume = await Resume.findOne({ userId: req.user._id }).sort({ createdAt: -1 });
+
+    if (!resume) {
+      return res.status(200).json({
+        success: true,
+        resume: null
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      resume
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @route   DELETE /api/resume/:id
+ * @desc    Delete a specific resume
+ * @access  Private
+ */
+const deleteResume = async (req, res, next) => {
+  try {
+    const resume = await Resume.findOne({ _id: req.params.id, userId: req.user._id });
+
+    if (!resume) {
+      return res.status(404).json({ success: false, message: "Resume not found" });
+    }
+
+    await resume.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: "Resume deleted successfully"
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { uploadResume, getResumes, getMyResume, deleteResume };

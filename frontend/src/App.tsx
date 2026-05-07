@@ -8,9 +8,11 @@ import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import Dashboard from "@/pages/Dashboard";
 import ResumeUpload from "@/pages/ResumeUpload";
+import ResumeManagement from "@/pages/ResumeManagement";
 import Interview from "@/pages/Interview";
-import NotFound from "@/pages/NotFound";
+import Analytics from "@/pages/Analytics";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -26,8 +28,10 @@ function AnimatedRoutes() {
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/resume" element={<ResumeManagement />} />
           <Route path="/upload" element={<ResumeUpload />} />
           <Route path="/interview" element={<Interview />} />
+          <Route path="/analytics" element={<Analytics />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

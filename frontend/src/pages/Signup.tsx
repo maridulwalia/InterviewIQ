@@ -21,13 +21,27 @@ export default function Signup() {
     setError("");
     setLoading(true);
     try {
-      const { data } = await authApi.signup({ name, email, password });
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      const response = await authApi.signup({ name, email, password });
+      console.log("Signup API Full Response:", response.data);
+
+      const { token, user } = response.data.data;
+
+      if (!token) {
+        console.error("Token is undefined in API response!");
+        throw new Error("Invalid response from server: Token missing");
+      }
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      console.log("Stored token:", localStorage.getItem("token"));
+      console.log("Stored user:", localStorage.getItem("user"));
+
       toast({ title: "Account created!", description: "Welcome to InterviewIQ." });
       navigate("/dashboard");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Signup failed. Please try again.");
+      console.error("Signup Error:", err);
+      setError(err.response?.data?.message || err.message || "Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }

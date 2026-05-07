@@ -20,13 +20,27 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      const { data } = await authApi.login({ email, password });
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      const response = await authApi.login({ email, password });
+      console.log("Login API Full Response:", response.data);
+
+      const { token, user } = response.data.data;
+      
+      if (!token) {
+        console.error("Token is undefined in API response!");
+        throw new Error("Invalid response from server: Token missing");
+      }
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      console.log("Stored token:", localStorage.getItem("token"));
+      console.log("Stored user:", localStorage.getItem("user"));
+
       toast({ title: "Welcome back!", description: "Login successful." });
       navigate("/dashboard");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed. Please try again.");
+      console.error("Login Error:", err);
+      setError(err.response?.data?.message || err.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }

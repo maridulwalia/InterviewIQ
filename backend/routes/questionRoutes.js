@@ -1,16 +1,16 @@
 const express = require("express");
-const { protect } = require("../middleware/auth");
-const { getQuestions, getAllQuestions } = require("../controllers/questionController");
-
 const router = express.Router();
+const {
+  getQuestions,
+  getAllQuestions,
+  getMockInterview,
+} = require("../controllers/questionController");
+const { protect } = require("../middleware/auth");
+const { validate, schemas } = require("../middleware/validator");
 
-// All question routes are protected
-router.use(protect);
-
-// @GET /api/questions        – Random questions (default 10, use ?limit=N&type=behavioral)
-router.get("/", getQuestions);
-
-// @GET /api/questions/all    – All questions, with optional ?type= filter
-router.get("/all", getAllQuestions);
+// Routes for /api/questions and /api/interview
+router.post("/", protect, validate(schemas.questionGeneration), getQuestions);
+router.get("/all", protect, getAllQuestions);
+router.post("/mock", protect, validate(schemas.questionGeneration), getMockInterview);
 
 module.exports = router;

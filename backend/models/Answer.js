@@ -21,6 +21,24 @@ const answerSchema = new mongoose.Schema(
       required: [true, "Answer text is required"],
       trim: true,
     },
+    sessionId: {
+      type: String,
+      index: true,
+    },
+    score: {
+      type: Number,
+      min: 0,
+      max: 10,
+    },
+    feedback: {
+      type: String,
+    },
+    missingPoints: {
+      type: [String],
+    },
+    improvementSuggestion: {
+      type: String,
+    },
   },
   { timestamps: true } // createdAt serves as timestamp
 );

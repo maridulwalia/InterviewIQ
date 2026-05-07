@@ -16,6 +16,11 @@ const questionSchema = new mongoose.Schema(
       enum: ["behavioral", "technical", "situational", "general"],
       default: "general",
     },
+    category: {
+      type: String,
+      trim: true,
+      default: "General",
+    },
   },
   { timestamps: true }
 );
