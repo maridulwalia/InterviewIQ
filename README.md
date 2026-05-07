@@ -177,15 +177,30 @@ To reduce API costs, the system checks for an active `InterviewSession`. If the 
 ## ⚙️ Local Development Setup
 
 ### Prerequisites
-- Node.js (v18.x or higher)
+- Node.js (v18.x or higher) OR [Bun](https://bun.sh/) (v1.0+)
 - MongoDB (Local or Atlas instance)
 - Google Gemini API Key
+
+
+### ⚡ Using Bun (Recommended)
+This project is fully compatible with [Bun](https://bun.sh/). Using Bun is significantly faster for installation and development.
+
+#### 1. Install Bun
+- **Windows**: `powershell -c "irm bun.sh/install.ps1 | iex"`
+- **macOS/Linux**: `curl -fsSL https://bun.sh/install | bash`
+
+#### 2. Bun Lockfile
+The **frontend** directory specifically uses `bun.lockb` for lightning-fast, deterministic builds.
+- **Frontend Installation**: `cd frontend && bun install`
+- **Contribution**: Ensure you commit any changes to `frontend/bun.lockb` when adding dependencies.
 
 ### 1. Clone & Install
 ```bash
 git clone https://github.com/yourusername/InterviewIQ.git
 cd InterviewIQ
 npm run install:all
+# OR using Bun for frontend:
+# npm install && cd backend && npm install && cd ../frontend && bun install
 ```
 
 ### 2. Environment Configuration
@@ -209,7 +224,8 @@ npm run dev
 
 ## ⚠️ Troubleshooting
 
-- **CORS Errors**: Ensure `origin` in `backend/server.js` matches your frontend port.
+- **CORS Errors**: Ensure the `origin` array in `backend/server.js` includes your frontend URL. 
+    - **Note**: The backend has **predefined ports** (`5173`, `8080`, `3000`). If your frontend runs on a different port (e.g., if `5173` is busy and Vite picks `5174`), the browser will block requests. You must manually add your port to the CORS origin list in the backend.
 - **AI Parsing Issues**: If Gemini returns malformed JSON, our robust `parseAIResponse` utility usually cleans it, but check your API key quota.
 - **Resume Extraction**: Ensure PDFs are text-based. Scanned images require OCR which is not yet supported.
 

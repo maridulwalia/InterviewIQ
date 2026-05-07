@@ -33,3 +33,7 @@ coverage/
 # OS
 .DS_Store
 Thumbs.db
+
+#Files
+*.doc
+*.docx
