@@ -19,14 +19,27 @@ initDB();
 
 // ─── Global Middlewares ───────────────────────────────────────────────
 
-// Enable CORS for the React frontend (port 8080 / 5173 / 3000)
+const allowedOrigins = [
+  "http://localhost:8080",
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://interview-iq-bice.vercel.app",
+  ...(process.env.FRONTEND_URLS || process.env.FRONTEND_URL || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+];
+
+// Enable CORS for local and deployed React frontends.
 app.use(
   cors({
-    origin: [
-      "http://localhost:8080",
-      "http://localhost:5173",
-      "http://localhost:3000",
-    ],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked origin: ${origin}`));
+    },
     credentials: true,
   })
 );

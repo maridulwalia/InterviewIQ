@@ -1,10 +1,15 @@
 import axios from "axios";
 
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ||
-  "http://localhost:5000/api";
+const normalizeApiBaseUrl = (url: string) => {
+  const trimmedUrl = url.replace(/\/$/, "");
+  return trimmedUrl.endsWith("/api") ? trimmedUrl : `${trimmedUrl}/api`;
+};
 
-export const BACKEND_BASE_URL = API_BASE_URL.replace(/\/api$/, "");
+export const API_BASE_URL = normalizeApiBaseUrl(
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"
+);
+
+export const BACKEND_BASE_URL = API_BASE_URL.slice(0, -"/api".length);
 
 export const getBackendUrl = (path: string) => {
   if (/^https?:\/\//i.test(path)) return path;

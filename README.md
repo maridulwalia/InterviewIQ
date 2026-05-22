@@ -258,6 +258,12 @@ The frontend defaults to `http://localhost:5000/api` for backend requests. If yo
 VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
+For the deployed Render backend, set the Vercel environment variable to:
+
+```env
+VITE_API_BASE_URL=https://interviewiq-gnfx.onrender.com/api
+```
+
 ### 4. Run Concurrently (Recommended)
 
 From the root directory, simply run:
@@ -277,6 +283,7 @@ Create a `.env` file in the `backend/` directory.
 ```env
 # Server Configuration
 PORT=5000
+FRONTEND_URLS=http://localhost:8080,http://localhost:5173,http://localhost:3000,https://interview-iq-bice.vercel.app
 
 # Database
 MONGO_URI=mongodb://localhost:27017/interviewiq
