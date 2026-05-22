@@ -4,7 +4,7 @@ import {
   FileText, Calendar, Trash2, Download, ExternalLink, 
   UploadCloud, CheckCircle2, AlertCircle, FileSearch, ShieldCheck 
 } from "lucide-react";
-import { resumeApi, type Resume } from "@/services/api";
+import { getBackendUrl, resumeApi, type Resume } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import AnimatedPage from "@/components/AnimatedPage";
 import { CardSkeleton } from "@/components/LoadingSkeleton";
@@ -120,7 +120,7 @@ export default function ResumeManagement() {
 
               <div className="flex items-center gap-3">
                 <a 
-                  href={`http://localhost:5000${resume.fileUrl}`} 
+                  href={getBackendUrl(resume.fileUrl)} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg border border-border hover:bg-muted transition-colors"

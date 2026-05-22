@@ -248,7 +248,14 @@ Navigate to the frontend directory:
 
 ```bash
 cd frontend
+cp .env.example .env
 npm run dev
+```
+
+The frontend defaults to `http://localhost:5000/api` for backend requests. If your backend runs somewhere else, update `frontend/.env`:
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
 ### 4. Run Concurrently (Recommended)
@@ -280,6 +287,12 @@ JWT_EXPIRES_IN=7d
 
 # AI API Keys
 GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+Create a `.env` file in the `frontend/` directory.
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
 ---
